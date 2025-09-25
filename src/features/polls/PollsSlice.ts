@@ -1,40 +1,37 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-
-interface Poll {
-  id: number;
-  question: string;
-  options: { id: number; text: string; votes: number }[];
-}
+import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit";
+import api from "../../api/axios";
+import type { Poll } from "../../interfaces/types"; // Import Poll interface from types
 
 interface PollsState {
   polls: Poll[];
-  status: "idle" | "loading" | "failed";
+  loading: boolean;
+  error?: string;
 }
 
-const initialState: PollsState = {
-  polls: [],
-  status: "idle",
-};
+const initialState: PollsState = { polls: [], loading: false };
 
-// Fetch polls
+// Async thunk to fetch polls
 export const fetchPolls = createAsyncThunk("polls/fetchPolls", async () => {
-  const response = await axios.get("/api/polls/"); // backend endpoint
-  return response.data;
+  const response = await api.get("/polls/");
+  return response.data as Poll[];
 });
 
-const pollsSlice = createSlice({
+export const pollsSlice = createSlice({
   name: "polls",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchPolls.pending, (state) => {
-        state.status = "loading";
+        state.loading = true;
       })
-      .addCase(fetchPolls.fulfilled, (state, action) => {
-        state.status = "idle";
+      .addCase(fetchPolls.fulfilled, (state, action: PayloadAction<Poll[]>) => {
+        state.loading = false;
         state.polls = action.payload;
+      })
+      .addCase(fetchPolls.rejected, (state) => {
+        state.loading = false;
+        state.error = "Failed to fetch polls";
       });
   },
 });
