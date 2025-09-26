@@ -14,7 +14,8 @@ export interface Poll {
   id: number;
   title: string;
   description?: string;
-  expiry_date?: string;
+  expiry_date: string;
+  created_at: string;
   created_by: number;
   options?: Option[];
 }
