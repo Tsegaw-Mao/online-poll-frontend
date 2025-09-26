@@ -10,7 +10,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ onLogout, isAuthenticated }) => (
   <header className="p-4 bg-gray-200 flex gap-4">
     <Link to="/">Home</Link>
-    <Link to="/create/polls/">Create Poll</Link>
+
 
     {!isAuthenticated && (
       <>
@@ -20,9 +20,12 @@ const Header: React.FC<HeaderProps> = ({ onLogout, isAuthenticated }) => (
     )}
 
     {isAuthenticated && (
-      <button onClick={onLogout} className="text-red-600 hover:underline">
-        Logout
-      </button>
+      <>
+        <Link to="/create/polls/">Create Poll</Link>
+        <button onClick={onLogout} className="text-red-600 hover:underline">
+          Logout
+        </button>
+      </>
     )}
   </header>
 );
